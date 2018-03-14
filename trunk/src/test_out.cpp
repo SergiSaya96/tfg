@@ -4,6 +4,7 @@
 
 int main(int argc, char *argv[])
 {
+  std::cout << "Start: " << std::endl;
   CDynamixelServerFTDI *dyn_server=CDynamixelServerFTDI::instance();
   CEventServer *event_server=CEventServer::instance();
   int num_buses=0,baudrate=0,event_id;
