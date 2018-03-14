@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<dynamixel_motor_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="dynamixel_motor_cfg_file.xsd">
+
+  <alarm_shtdwn>4</alarm_shtdwn>
+  <min_angle>-125</min_angle>
+  <max_angle>125</max_angle>
+  <temp_limit>85</temp_limit>
+  <max_voltage>19</max_voltage>
+  <min_voltage>6</min_voltage>
+  <max_torque>100</max_torque>
+  <cw_comp_margin>0</cw_comp_margin>
+  <ccw_comp_margin>0</ccw_comp_margin>
+  <cw_comp_slope>32</cw_comp_slope>
+  <ccw_comp_slope>32</ccw_comp_slope>
+  <punch>32</punch>
+  <kp>0</kp>
+  <ki>0</ki>
+  <kd>0</kd>
+</dynamixel_motor_config>

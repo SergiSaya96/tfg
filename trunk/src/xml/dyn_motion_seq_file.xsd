@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!--
+
+file      : dyn_motion_seq_file.xsd 
+author    : Sergi Hernandez Juan (shernand@iri.upc.edu)
+copyright : not copyrighted - public domain
+
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:simpleType name="motion_t">
+     <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="absolute"/>
+        <xsd:enumeration value="relative"/>
+     </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="step_t">
+    <xsd:sequence>
+      <xsd:element name="position" type="xsd:double" maxOccurs="unbounded">
+      </xsd:element>
+      <xsd:element name="velocity" type="xsd:double" maxOccurs="unbounded">
+      </xsd:element>
+      <xsd:element name="mode" type="motion_t">
+      </xsd:element>
+      <xsd:element name="delay" type="xsd:double">
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="dyn_sequence_t">
+    <xsd:sequence>
+      <xsd:element name="num_motors" type="xsd:unsignedInt">
+      </xsd:element>
+      <xsd:element name="step" type="step_t" maxOccurs="unbounded">
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="dyn_motion_seq" type="dyn_sequence_t">
+  </xsd:element>
+
+</xsd:schema>

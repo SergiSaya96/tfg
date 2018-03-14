@@ -7,12 +7,33 @@ src/CMakeFiles/test_out.dir/test_out.o
  /usr/local/include/iridrivers/cqueue.h
  /usr/local/include/iridrivers/dynamixel.h
  /usr/local/include/iridrivers/dynamixel_common.h
+ /usr/local/include/iridrivers/dynamixel_motor.h
+ /usr/local/include/iridrivers/dynamixelexceptions.h
  /usr/local/include/iridrivers/dynamixelserver.h
  /usr/local/include/iridrivers/dynamixelserver_ftdi.h
  /usr/local/include/iridrivers/event.h
  /usr/local/include/iridrivers/eventexceptions.h
  /usr/local/include/iridrivers/eventserver.h
  /usr/local/include/iridrivers/exceptions.h
+ /usr/local/include/iridrivers/ftdimodule.h
+ /usr/local/include/iridrivers/mutex.h
+ /usr/local/include/iridrivers/thread.h
+ /usr/local/include/iridrivers/threadserver.h
+src/CMakeFiles/test_out.dir/test_servos2.o
+ /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/test_servos2.cpp
+ /usr/local/include/iridrivers/comm.h
+ /usr/local/include/iridrivers/cqueue.h
+ /usr/local/include/iridrivers/dynamixel.h
+ /usr/local/include/iridrivers/dynamixel_common.h
+ /usr/local/include/iridrivers/dynamixel_motor.h
+ /usr/local/include/iridrivers/dynamixelexceptions.h
+ /usr/local/include/iridrivers/dynamixelserver.h
+ /usr/local/include/iridrivers/dynamixelserver_ftdi.h
+ /usr/local/include/iridrivers/event.h
+ /usr/local/include/iridrivers/eventexceptions.h
+ /usr/local/include/iridrivers/eventserver.h
+ /usr/local/include/iridrivers/exceptions.h
+ /usr/local/include/iridrivers/ftdimodule.h
  /usr/local/include/iridrivers/mutex.h
  /usr/local/include/iridrivers/thread.h
  /usr/local/include/iridrivers/threadserver.h

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<!--
+
+file      : dynamixel_motor_group_cfg_file.xsd 
+author    : Sergi Hernandez Juan (shernand@iri.upc.edu)
+copyright : not copyrighted - public domain
+
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:complexType name="dyn_motor_config_t">
+    <xsd:sequence>
+      <xsd:element name="id" type="xsd:int">
+      </xsd:element>
+      <xsd:element name="config_file" type="xsd:string">
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="dyn_motor_group_config_t">
+    <xsd:sequence>
+      <xsd:element name="dynamixel_version" type="xsd:int" minOccurs="0">
+      </xsd:element>
+      <xsd:element name="dyn_motor_config" type="dyn_motor_config_t" maxOccurs="unbounded">
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="dyn_motor_group_config" type="dyn_motor_group_config_t">
+  </xsd:element>
+
+</xsd:schema>

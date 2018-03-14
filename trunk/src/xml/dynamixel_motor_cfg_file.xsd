@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<!--
+
+file      : dynamixel_cfg_file.xsd 
+author    : Sergi Hernandez Juan (shernand@iri.upc.edu)
+copyright : not copyrighted - public domain
+
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:simpleType name="alarm_t">
+     <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="instruction_error"/>
+        <xsd:enumeration value="overload_error"/>
+        <xsd:enumeration value="checksum_error"/>
+        <xsd:enumeration value="range_error"/>
+        <xsd:enumeration value="overheating_error"/>
+        <xsd:enumeration value="angle_limit_error"/>
+        <xsd:enumeration value="input_voltage_error"/>
+     </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="dynamixel_motor_config_t">
+    <xsd:sequence>
+      <xsd:element name="alarm_shtdwn" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="max_angle" type="xsd:float">
+      </xsd:element>
+      <xsd:element name="min_angle" type="xsd:float">
+      </xsd:element>
+      <xsd:element name="temp_limit" type="xsd:int">
+      </xsd:element>
+      <xsd:element name="max_voltage" type="xsd:float">
+      </xsd:element>
+      <xsd:element name="min_voltage" type="xsd:float">
+      </xsd:element>
+      <xsd:element name="max_torque" type="xsd:float">
+      </xsd:element>
+      <xsd:element name="cw_comp_margin" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="ccw_comp_margin" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="cw_comp_slope" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="ccw_comp_slope" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="punch" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="kp" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="ki" type="xsd:unsignedByte">
+      </xsd:element>
+      <xsd:element name="kd" type="xsd:unsignedByte">
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="dynamixel_motor_config" type="dynamixel_motor_config_t">
+  </xsd:element>
+
+</xsd:schema>

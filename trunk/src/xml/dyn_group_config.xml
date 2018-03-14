@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<dyn_motor_group_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="dyn_motor_group_cfg_file.xsd">
+
+  <dyn_motor_config>
+    <id>1</id>
+    <config_file>dyn_servo_config.xml</config_file>
+  </dyn_motor_config>
+  <dyn_motor_config>
+    <id>6</id>
+    <config_file>dyn_servo_config.xml</config_file>
+  </dyn_motor_config>
+</dyn_motor_group_config>

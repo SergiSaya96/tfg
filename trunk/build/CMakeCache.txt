@@ -213,6 +213,12 @@ dynamixel_INCLUDE_DIR:PATH=/usr/local/include/iridrivers
 dynamixel_LIBRARY:FILEPATH=/usr/local/lib/iridrivers/libdynamixel.so
 
 //Path to a file.
+dynamixel_motor_cont_INCLUDE_DIR:PATH=/usr/local/include/iridrivers
+
+//Path to a library.
+dynamixel_motor_cont_LIBRARY:FILEPATH=/usr/local/lib/iridrivers/libdynamixel_motor_cont.so
+
+//Path to a file.
 iriutils_INCLUDE_DIR:PATH=/usr/local/include/iridrivers
 
 //Path to a library.

@@ -140,6 +140,21 @@ test_out.s:
 	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/test_out.s
 .PHONY : test_out.s
 
+# target to build an object file
+test_servos2.o:
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/test_servos2.o
+.PHONY : test_servos2.o
+
+# target to preprocess a source file
+test_servos2.i:
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/test_servos2.i
+.PHONY : test_servos2.i
+
+# target to generate assembly for a file
+test_servos2.s:
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/test_servos2.s
+.PHONY : test_servos2.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -152,6 +167,9 @@ help:
 	@echo "... test_out.o"
 	@echo "... test_out.i"
 	@echo "... test_out.s"
+	@echo "... test_servos2.o"
+	@echo "... test_servos2.i"
+	@echo "... test_servos2.s"
 .PHONY : help
 
 
