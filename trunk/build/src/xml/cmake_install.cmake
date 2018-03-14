@@ -1,4 +1,4 @@
-# Install script for directory: /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src
+# Install script for directory: /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/xml
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -32,9 +32,17 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
   set(CMAKE_INSTALL_SO_NO_EXE "1")
 endif()
 
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/src/xml/cmake_install.cmake")
+if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/iridrivers/xml" TYPE FILE FILES
+    "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/xml/dynamixel_motor_cfg_file.xsd"
+    "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/xml/dynamixel_motor_group_cfg_file.xsd"
+    )
+endif()
 
+if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/iridrivers/xml" TYPE FILE FILES
+    "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/xml/dynamixel_motor_cfg_file.hxx"
+    "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/xml/dynamixel_motor_group_cfg_file.hxx"
+    )
 endif()
 

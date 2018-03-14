@@ -60,34 +60,34 @@ CMAKE_SOURCE_DIR = /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk
 CMAKE_BINARY_DIR = /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/uninstall.dir
+# Target rules for target CMakeFiles/distclean.dir
 
 # All Build rule for target.
-CMakeFiles/uninstall.dir/all:
-	$(MAKE) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/depend
-	$(MAKE) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles --progress-num= "Built target uninstall"
-.PHONY : CMakeFiles/uninstall.dir/all
+CMakeFiles/distclean.dir/all:
+	$(MAKE) -f CMakeFiles/distclean.dir/build.make CMakeFiles/distclean.dir/depend
+	$(MAKE) -f CMakeFiles/distclean.dir/build.make CMakeFiles/distclean.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles --progress-num= "Built target distclean"
+.PHONY : CMakeFiles/distclean.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/uninstall.dir/rule: cmake_check_build_system
+CMakeFiles/distclean.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/uninstall.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/distclean.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 0
-.PHONY : CMakeFiles/uninstall.dir/rule
+.PHONY : CMakeFiles/distclean.dir/rule
 
 # Convenience name for target.
-uninstall: CMakeFiles/uninstall.dir/rule
+distclean: CMakeFiles/distclean.dir/rule
 
-.PHONY : uninstall
-
-# clean rule for target.
-CMakeFiles/uninstall.dir/clean:
-	$(MAKE) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/clean
-.PHONY : CMakeFiles/uninstall.dir/clean
+.PHONY : distclean
 
 # clean rule for target.
-clean: CMakeFiles/uninstall.dir/clean
+CMakeFiles/distclean.dir/clean:
+	$(MAKE) -f CMakeFiles/distclean.dir/build.make CMakeFiles/distclean.dir/clean
+.PHONY : CMakeFiles/distclean.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/distclean.dir/clean
 
 .PHONY : clean
 
@@ -124,34 +124,34 @@ clean: CMakeFiles/doc.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/distclean.dir
+# Target rules for target CMakeFiles/uninstall.dir
 
 # All Build rule for target.
-CMakeFiles/distclean.dir/all:
-	$(MAKE) -f CMakeFiles/distclean.dir/build.make CMakeFiles/distclean.dir/depend
-	$(MAKE) -f CMakeFiles/distclean.dir/build.make CMakeFiles/distclean.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles --progress-num= "Built target distclean"
-.PHONY : CMakeFiles/distclean.dir/all
+CMakeFiles/uninstall.dir/all:
+	$(MAKE) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/depend
+	$(MAKE) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles --progress-num= "Built target uninstall"
+.PHONY : CMakeFiles/uninstall.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/distclean.dir/rule: cmake_check_build_system
+CMakeFiles/uninstall.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/distclean.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/uninstall.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 0
-.PHONY : CMakeFiles/distclean.dir/rule
+.PHONY : CMakeFiles/uninstall.dir/rule
 
 # Convenience name for target.
-distclean: CMakeFiles/distclean.dir/rule
+uninstall: CMakeFiles/uninstall.dir/rule
 
-.PHONY : distclean
-
-# clean rule for target.
-CMakeFiles/distclean.dir/clean:
-	$(MAKE) -f CMakeFiles/distclean.dir/build.make CMakeFiles/distclean.dir/clean
-.PHONY : CMakeFiles/distclean.dir/clean
+.PHONY : uninstall
 
 # clean rule for target.
-clean: CMakeFiles/distclean.dir/clean
+CMakeFiles/uninstall.dir/clean:
+	$(MAKE) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/clean
+.PHONY : CMakeFiles/uninstall.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/uninstall.dir/clean
 
 .PHONY : clean
 
@@ -160,16 +160,18 @@ clean: CMakeFiles/distclean.dir/clean
 
 # Convenience name for "all" pass in the directory.
 src/all: src/CMakeFiles/test_out.dir/all
+src/all: src/xml/all
 
 .PHONY : src/all
 
 # Convenience name for "clean" pass in the directory.
 src/clean: src/CMakeFiles/test_out.dir/clean
+src/clean: src/xml/clean
 
 .PHONY : src/clean
 
 # Convenience name for "preinstall" pass in the directory.
-src/preinstall:
+src/preinstall: src/xml/preinstall
 
 .PHONY : src/preinstall
 
@@ -180,7 +182,7 @@ src/preinstall:
 src/CMakeFiles/test_out.dir/all:
 	$(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/depend
 	$(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles --progress-num=1,2,3 "Built target test_out"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles --progress-num=1,2 "Built target test_out"
 .PHONY : src/CMakeFiles/test_out.dir/all
 
 # Include target in all.
@@ -190,7 +192,7 @@ all: src/CMakeFiles/test_out.dir/all
 
 # Build rule for subdir invocation for target.
 src/CMakeFiles/test_out.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/test_out.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 0
 .PHONY : src/CMakeFiles/test_out.dir/rule
@@ -207,6 +209,56 @@ src/CMakeFiles/test_out.dir/clean:
 
 # clean rule for target.
 clean: src/CMakeFiles/test_out.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory src/xml
+
+# Convenience name for "all" pass in the directory.
+src/xml/all:
+
+.PHONY : src/xml/all
+
+# Convenience name for "clean" pass in the directory.
+src/xml/clean: src/xml/CMakeFiles/xsd_files_gen.dir/clean
+
+.PHONY : src/xml/clean
+
+# Convenience name for "preinstall" pass in the directory.
+src/xml/preinstall:
+
+.PHONY : src/xml/preinstall
+
+#=============================================================================
+# Target rules for target src/xml/CMakeFiles/xsd_files_gen.dir
+
+# All Build rule for target.
+src/xml/CMakeFiles/xsd_files_gen.dir/all:
+	$(MAKE) -f src/xml/CMakeFiles/xsd_files_gen.dir/build.make src/xml/CMakeFiles/xsd_files_gen.dir/depend
+	$(MAKE) -f src/xml/CMakeFiles/xsd_files_gen.dir/build.make src/xml/CMakeFiles/xsd_files_gen.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles --progress-num=3 "Built target xsd_files_gen"
+.PHONY : src/xml/CMakeFiles/xsd_files_gen.dir/all
+
+# Build rule for subdir invocation for target.
+src/xml/CMakeFiles/xsd_files_gen.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 src/xml/CMakeFiles/xsd_files_gen.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 0
+.PHONY : src/xml/CMakeFiles/xsd_files_gen.dir/rule
+
+# Convenience name for target.
+xsd_files_gen: src/xml/CMakeFiles/xsd_files_gen.dir/rule
+
+.PHONY : xsd_files_gen
+
+# clean rule for target.
+src/xml/CMakeFiles/xsd_files_gen.dir/clean:
+	$(MAKE) -f src/xml/CMakeFiles/xsd_files_gen.dir/build.make src/xml/CMakeFiles/xsd_files_gen.dir/clean
+.PHONY : src/xml/CMakeFiles/xsd_files_gen.dir/clean
+
+# clean rule for target.
+clean: src/xml/CMakeFiles/xsd_files_gen.dir/clean
 
 .PHONY : clean
 

@@ -1,10 +1,17 @@
 #include "dynamixelexceptions.h"
 #include "dynamixel_motor.h"
-#include <math.h>
-#include <time.h>
 #include "eventexceptions.h"
+#include "eventserver.h"
+#include "dynamixel_motor_group.h"
 #include "dynamixelserver_ftdi.h"
 #include <iostream>
+#include <math.h>
+#include <time.h>
+
+std::string group_name="GROUP1";
+
+std::string group_config_file="../src/xml/dyn_group_config.xml";
+std::string dyn_config_file="../src/xml/dyn_config.xml";
 
 int main(int argc, char *argv[])
 {
@@ -17,10 +24,12 @@ int main(int argc, char *argv[])
   unsigned short int model;
   CDynamixel *dyn_device;
   unsigned int i,num_dev;
-  //___________________________________________________________________
+  //_________________________ABSOLUTE ANGLE__________________________________________
   CDynamixelMotor *cont = NULL;
-  int device = 6;
   std::string cont_name="";
+  //_________________________GROUP___________________________________________________-
+  std::vector<double> angles,speeds,torques;
+  CDynamixelMotorGroup group(group_name,dyn_server);
 
 
   num_buses=dyn_server->get_num_buses();
@@ -72,6 +81,7 @@ int main(int argc, char *argv[])
   /////////////////////////////////////////////////////////////////////////
   /////MOVE RELATIVE ANGLE
   /////////////////////////////////////////////////////////////////////////
+  /*
   double desired_speed   = 100.0; //chosen speed when moving angle
   double max_angle_error =   0.5; //max angle error permitted
   double time_interval   =   0.1; //time in secs between checks
@@ -86,7 +96,7 @@ int main(int argc, char *argv[])
   for(i=0;i<num_dev;i++)
   {
     std::cout << "-----------------------------------------------------------" <<  std::endl;
-    double absolute_angle=100.0;
+    double absolute_angle=50.0;
     double current_abs_angle;
     std::cout << "MOVE ABSOLUTE ANGLE: " << absolute_angle << "\tservo: "<< devices[i] << std::endl;
     cont = new CDynamixelMotor(cont_name, dyn_server, devices[i]);
@@ -115,5 +125,42 @@ int main(int argc, char *argv[])
     std::cout << "Error angle: " << current_abs_angle-desired_angle << std::endl;
     std::cout << "Done" << std::endl;
     sleep(1);
+  }
+  */
+  /////////////////////////////////////////////////////////////////////////
+  /////MOVE GROUP
+  /////////////////////////////////////////////////////////////////////////
+  try{
+      std::cout << "TRY" << std::endl;
+      #ifdef _HAVE_XSD
+        std::cout << "IF" << std::endl;
+      dyn_server->config(dyn_config_file);
+      group.load_config(group_config_file);
+      angles.resize(2);
+      angles[0]=90;
+      angles[1]=-10;
+      speeds.resize(2);
+      speeds[0]=100;
+      speeds[1]=50;
+      group.move_absolute_angle(angles,speeds);
+      sleep(5);
+      angles.resize(2);
+      angles[0]=-90;
+      angles[1]=100;
+      group.move_absolute_angle(angles,speeds);
+      sleep(5);
+      // relative motion
+      angles[0]=10;
+      angles[1]=-1;
+      for(i=0;i<10;i++)
+      {
+        std::cout << "relative move" << std::endl;
+        group.move_relative_angle(angles,speeds);
+        sleep(1);
+      }
+      #endif
+
+  }catch(CException &e){
+    std::cout << e.what() << std::endl;
   }
 }

@@ -5,7 +5,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/test_out.cpp" "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/src/CMakeFiles/test_out.dir/test_out.o"
-  "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/src/test_servos2.cpp" "/home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/src/CMakeFiles/test_out.dir/test_servos2.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

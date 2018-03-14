@@ -7,6 +7,7 @@ src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/cqueue.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/dynamixel.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/dynamixel_common.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/dynamixel_motor.h
+src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/dynamixel_motor_group.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/dynamixelexceptions.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/dynamixelserver.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/dynamixelserver_ftdi.h
@@ -18,22 +19,4 @@ src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/ftdimodule
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/mutex.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/thread.h
 src/CMakeFiles/test_out.dir/test_out.o: /usr/local/include/iridrivers/threadserver.h
-
-src/CMakeFiles/test_out.dir/test_servos2.o: ../src/test_servos2.cpp
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/comm.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/cqueue.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/dynamixel.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/dynamixel_common.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/dynamixel_motor.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/dynamixelexceptions.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/dynamixelserver.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/dynamixelserver_ftdi.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/event.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/eventexceptions.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/eventserver.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/exceptions.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/ftdimodule.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/mutex.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/thread.h
-src/CMakeFiles/test_out.dir/test_servos2.o: /usr/local/include/iridrivers/threadserver.h
 

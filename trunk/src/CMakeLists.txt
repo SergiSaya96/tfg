@@ -1,3 +1,5 @@
+ADD_SUBDIRECTORY(xml)
+
 # locate the necessary dependencies
 # add the necessary include directories
 FIND_PACKAGE(iriutils)

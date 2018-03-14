@@ -79,6 +79,18 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -112,28 +124,16 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
 # The main all target
 all: cmake_check_build_system
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/src/CMakeFiles/progress.marks
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/all
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/src/xml/CMakeFiles/progress.marks
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/xml/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/clean
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/xml/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,12 +143,12 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/xml/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/xml/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
@@ -157,34 +157,19 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-src/CMakeFiles/test_out.dir/rule:
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/test_out.dir/rule
-.PHONY : src/CMakeFiles/test_out.dir/rule
+src/xml/CMakeFiles/xsd_files_gen.dir/rule:
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f CMakeFiles/Makefile2 src/xml/CMakeFiles/xsd_files_gen.dir/rule
+.PHONY : src/xml/CMakeFiles/xsd_files_gen.dir/rule
 
 # Convenience name for target.
-test_out: src/CMakeFiles/test_out.dir/rule
+xsd_files_gen: src/xml/CMakeFiles/xsd_files_gen.dir/rule
 
-.PHONY : test_out
+.PHONY : xsd_files_gen
 
 # fast build rule for target.
-test_out/fast:
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/build
-.PHONY : test_out/fast
-
-# target to build an object file
-test_out.o:
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/test_out.o
-.PHONY : test_out.o
-
-# target to preprocess a source file
-test_out.i:
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/test_out.i
-.PHONY : test_out.i
-
-# target to generate assembly for a file
-test_out.s:
-	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/CMakeFiles/test_out.dir/build.make src/CMakeFiles/test_out.dir/test_out.s
-.PHONY : test_out.s
+xsd_files_gen/fast:
+	cd /home/sergi/iri-lab/labrobotica/tools/test_servos/trunk/build && $(MAKE) -f src/xml/CMakeFiles/xsd_files_gen.dir/build.make src/xml/CMakeFiles/xsd_files_gen.dir/build
+.PHONY : xsd_files_gen/fast
 
 # Help Target
 help:
@@ -194,14 +179,11 @@ help:
 	@echo "... depend"
 	@echo "... install/strip"
 	@echo "... edit_cache"
-	@echo "... test_out"
+	@echo "... install"
 	@echo "... rebuild_cache"
+	@echo "... xsd_files_gen"
 	@echo "... list_install_components"
 	@echo "... install/local"
-	@echo "... install"
-	@echo "... test_out.o"
-	@echo "... test_out.i"
-	@echo "... test_out.s"
 .PHONY : help
 
 

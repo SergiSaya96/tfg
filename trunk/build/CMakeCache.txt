@@ -200,6 +200,9 @@ IRI_DOC_DIR:PATH=IRI_DOC_DIR-NOTFOUND
 //Single output directory for building all libraries.
 LIBRARY_OUTPUT_PATH:PATH=
 
+//Path to a library.
+XSD_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libxerces-c.so
+
 //Path to a file.
 comm_INCLUDE_DIR:PATH=/usr/local/include/iridrivers
 
@@ -329,7 +332,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=3
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

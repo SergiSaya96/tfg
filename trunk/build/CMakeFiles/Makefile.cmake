@@ -12,6 +12,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.9.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.9.1/CMakeSystem.cmake"
   "../src/CMakeLists.txt"
+  "../src/xml/CMakeLists.txt"
   "/usr/share/cmake-3.9/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.9/Modules/CMakeCXXInformation.cmake"
   "/usr/share/cmake-3.9/Modules/CMakeCommonLanguageInclude.cmake"
@@ -47,12 +48,14 @@ set(CMAKE_MAKEFILE_OUTPUTS
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "src/xml/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/uninstall.dir/DependInfo.cmake"
-  "CMakeFiles/doc.dir/DependInfo.cmake"
   "CMakeFiles/distclean.dir/DependInfo.cmake"
+  "CMakeFiles/doc.dir/DependInfo.cmake"
+  "CMakeFiles/uninstall.dir/DependInfo.cmake"
   "src/CMakeFiles/test_out.dir/DependInfo.cmake"
+  "src/xml/CMakeFiles/xsd_files_gen.dir/DependInfo.cmake"
   )
