@@ -1,3 +1,5 @@
+//openCM IDE
+
 #define DXL_BUS_SERIAL1 1  //Dynamixel on Serial1(USART1)  <-OpenCM9.04
 
 Dynamixel Dxl(DXL_BUS_SERIAL1);
