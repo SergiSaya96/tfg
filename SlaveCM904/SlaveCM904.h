@@ -39,10 +39,10 @@
 
 
 
-#define DXL_BAUD_RATE_9600 0
-#define DXL_BAUD_RATE_57600 1
-#define DXL_BAUD_RATE_115200 2
-#define DXL_BAUD_RATE_1Mbps 3
+#define DXL_BAUD_RATE_9600 207
+#define DXL_BAUD_RATE_57600 34
+#define DXL_BAUD_RATE_115200 16
+#define DXL_BAUD_RATE_1Mbps 1
 
 #define LED_OFF 0
 #define LED_ON 1
@@ -53,6 +53,7 @@ enum INSTRUCTION
   APING,
   READ,
   WRITE,
+  //-------------
   REG_WRITE,
   ACTION,
   ARESET,
@@ -109,7 +110,7 @@ class SlaveCM904
     void Begin();
     void Set(byte MNL, byte MNH, byte FV, byte ID, byte BR, byte RDT, byte SRL, byte DBR, byte led);
     bool GetMessage();
-    void TransmitMessage( byte err, byte* data, byte len );
+    void TransmitMessage( byte err, byte index, byte len );
     void GenerateCheckSum();
     void postProcessRegisterWrite(); //funció per actualitzar despres de l'escritra a la eeprom
     bool CheckID();
@@ -154,7 +155,7 @@ void SlaveCM904::Begin()
 //------------------------------------------------------------------------------
 // SlaveCM904::Begin - Initialize the object from given values
 //------------------------------------------------------------------------------
-//falta assignar els valors a la emprom  cridant a la funció begin
+//falta assignar els valors a la emprom 
 void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, byte SRL, byte DBR, byte led)
 {
   REGISTER[EEPROM_MODEL_NUMBER_L] = MNL;
@@ -179,7 +180,21 @@ void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, 
   REGISTER[EEPROM_RETURN_DELAY_TIME] = RDT;
   REGISTER[EEPROM_STATUS_RETURN_LEVEL] = SRL;
   REGISTER[EEPROM_DXL_BAUD_RATE] = DBR;
-  Dxl.begin(REGISTER[EEPROM_DXL_BAUD_RATE]);
+  switch (REGISTER[EEPROM_DXL_BAUD_RATE]) {
+    case DXL_BAUD_RATE_9600:
+      Dxl.begin(0);
+      break;
+    case DXL_BAUD_RATE_57600:
+      Dxl.begin(1);
+      break;
+    case DXL_BAUD_RATE_115200:
+      Dxl.begin(2);
+      break;
+    case DXL_BAUD_RATE_1Mbps:
+      Dxl.begin(3);
+      break;
+  }
+  
   REGISTER[EEPROM_LED] = led;
   if( led == LED_ON ) Indicator(LED_ON);
   if( led == LED_OFF ) Indicator(LED_OFF);
@@ -280,6 +295,9 @@ void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
 {
   switch ( instruction )
   {
+    case NONE:
+      {;}
+      break;
     case APING:
       {
         Ping();
@@ -289,7 +307,7 @@ void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
       {
         byte index = param[ 0 ];
         byte datalen = param[ 1 ];
-        //transmitMessage( 0, index, datalen );
+        TransmitMessage( 0, index, datalen );
       }
       break;
     /*case WRITE:
@@ -298,23 +316,39 @@ void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
         byte length = len - 1;
 
         transmitMessage( 0, 0, 0 ); // Start sending response as quick as possible
-        writeValues(index, length, param + 1 );
-        postProcessRegisterWrite();
+        writeValues(index, length, param + 1 );  //Write values on EEPROM & update REGISTER
+        postProcessRegisterWrite(); //execute possible changes
       }
       break;*/
   }
 }
 
-void SlaveCM904::TransmitMessage( byte err, byte* data, byte len )
+void SlaveCM904::TransmitMessage( byte err, byte index, byte len )
 {
-  /*
   byte txmsg[ 1024 ];
 
   txmsg[ 0 ] = txmsg[ 1 ] = 0xFF;
-  txmsg[ 2 ] = REG[ REG_ID ];
+  txmsg[ 2 ] = REGISTER[ EEPROM_ID ];
   txmsg[ 3 ] = len + 2;
   txmsg[ 4 ] = err;
-*/
+
+  for (int i = 0; i < len; ++i )
+  {
+    txmsg[ 5 + i ] = REGISTER[ index + i ];
+  }
+
+  byte checksum = 0;
+  for (int i = 2; i < 5 + len; ++i )
+  {
+    checksum += txmsg[ i ];
+  }
+  checksum = ~checksum;
+  txmsg[ 5 + len ] = checksum;
+
+  for (int j = 0; j <= 5+len; j++) {
+    Dxl.writeRaw(txmsg[j]);
+  }
+  delayMicroseconds(800);
 }
 
 void SlaveCM904::Indicator(int status)
