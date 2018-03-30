@@ -116,7 +116,7 @@ class SlaveCM904
     bool CheckID();
     void Indicator(int status);
     void Blink();
-    void Ping();
+    void Ping(byte err);
   protected:
     int DecodeIndex;
     byte mID;
@@ -210,8 +210,10 @@ bool SlaveCM904::GetMessage()
   DecodeIndex = DE_HEADER1;
   if (Dxl.available())
   {
+    Serial.println("if");
     while (!finish)
     {
+      Serial.println("While");
       input = Dxl.readRaw();
       switch ( DecodeIndex )
       {
@@ -236,25 +238,30 @@ bool SlaveCM904::GetMessage()
           {
             mID = input;
             DecodeIndex = DE_LENGTH;
-            Serial.print("ID:");
+            Serial.print("ID: ");
             Serial.println(input);
           }
           break;
         case DE_LENGTH:
           mLength = input;
           DecodeIndex = DE_INSTRUCTION;
-          Serial.print("DE_LENGTH");
+          Serial.print("DE_LENGTH: ");
           Serial.println(mLength);
           break;
         case DE_INSTRUCTION:
           mInstruction = input;
           mCount = 0;
+          mParam[0] = 0;
           DecodeIndex = DE_DATA;
-          Serial.print("DE_INSTRUCTION");
+          Serial.print("DE_INSTRUCTION: ");
           Serial.println(mInstruction);
           if ( mLength == 2 ) DecodeIndex = DE_CHECKSUM;
           break;
         case DE_DATA:
+          Serial.print("DE_PARAM: ");
+          Serial.println(input);
+          Serial.print("DE_Count: ");
+          Serial.println(mCount);
           mParam[ mCount++ ] = input;
           if ( mCount >= mLength - 2 )
           {
@@ -263,22 +270,40 @@ bool SlaveCM904::GetMessage()
           break;
         case DE_CHECKSUM:
           {
-            Serial.print("DE_CHECKSUM");
+            Serial.println("DE_CHECKSUM");
             DecodeIndex = DE_HEADER1;
             GenerateCheckSum();
+            Serial.print("Recieved: ");
+            Serial.print(input);
+            Serial.print(" Generated: ");
+            Serial.println(mChecksum);
             if (mChecksum  ==  input )
+            {
+              Serial.println("ChecksumOK");
+              if (ID_OK = CheckID() )
+              {
+                Serial.print("ID:");
+                Serial.print(mID);
+                Serial.print(" Length:");
+                Serial.print(mLength);
+                Serial.print(" Ims:");
+                Serial.print(mInstruction);
+                Serial.print(" Param:");
+                for (int i = 0; i<=(mCount-1); i++)
+                {
+                  Serial.print(mParam[i]);
+                  Serial.print("-");
+                }
+                Serial.print(" CheS:");
+                Serial.println(mChecksum);
+                ProcessMessage( mInstruction, mParam, mLength - 2 );
+              }
+            }
+            else
             {
               if (ID_OK = CheckID() )
               {
-                Serial.print(mID);
-                Serial.print(mLength);
-                Serial.print(mInstruction);
-                for (int i = 0; i<=mCount; i++)
-                {
-                  Serial.print(mParam[i]);
-                }
-                Serial.println(mChecksum);
-                ProcessMessage( mInstruction, mParam, mLength - 2 );
+                Ping(8);
               }
             }
           }
@@ -286,8 +311,8 @@ bool SlaveCM904::GetMessage()
           break;
       }
     }
-  }
   delayMicroseconds(800);
+  }
   return ID_OK;
 }
 
@@ -300,7 +325,7 @@ void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
       break;
     case APING:
       {
-        Ping();
+        Ping(0);
       }
       break;
     case READ:
@@ -314,7 +339,6 @@ void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
       {
         byte index = param[ 0 ];
         byte length = len - 1;
-
         transmitMessage( 0, 0, 0 ); // Start sending response as quick as possible
         writeValues(index, length, param + 1 );  //Write values on EEPROM & update REGISTER
         postProcessRegisterWrite(); //execute possible changes
@@ -376,9 +400,9 @@ bool SlaveCM904::CheckID()
   return ID_OK;
 }
 
-void SlaveCM904::Ping()
+void SlaveCM904::Ping(byte error)
 {
-  int rep[] = { 255, 255, REGISTER[EEPROM_ID], 2, 0, ~(REGISTER[EEPROM_ID]+2)};
+  int rep[] = { 255, 255, REGISTER[EEPROM_ID], 2, error, ~(REGISTER[EEPROM_ID]+2)};
   for (int j = 0; j <= 5; j++) {
     Dxl.writeRaw(rep[j]);
   }
