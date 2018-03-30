@@ -15,11 +15,11 @@
 #include <Dynamixel.h>
 
 
-#define DXL_BUS_SERIAL1 1  //Dynamixel on Serial1(USART1)  <-OpenCM9.04
-
 //------------------------------------------------------------------------------
 // Defines
 //------------------------------------------------------------------------------
+#define DXL_BUS_SERIAL1 1  //Dynamixel on Serial1(USART1)  <-OpenCM9.04
+
 #define MODEL_CM_904L 0x90
 #define MODEL_CM_904H 0x01
 #define MODEL_AX_12L 12
@@ -70,28 +70,59 @@ enum DECODE_STEP
   DE_CHECKSUM
 };
 
+enum EEPPROM_REG
+{
+  EEPROM_MODEL_NUMBER_L,
+  EEPROM_MODEL_NUMBER_H,
+  EEPROM_FIRMWARE_VERSION=0x06,
+  EEPROM_ID,
+  EEPROM_BUD_RATE,
+  EEPROM_RETURN_DELAY_TIME,
+  EEPROM_STATUS_RETURN_LEVEL,
+  EEPROM_DXL_BAUD_RATE=0x12,
+  EEPROM_LED,
+  EEPROM_ERR_OFF_L,
+  EEPROM_ERR_OFF_H,
+  EEPROM_ERR_GAIN_L,
+  EEPROM_ERR_GAIN_H
+};
+
+enum RAM_REG
+{
+  RAM_ADL=0x18,
+  RAM_ADH,
+  RAM_CAL_OFF_PORCESS,
+  RAM_CAL_GAIN1_L,
+  RAM_CAL_GAIN1_H,
+  RAM_CAL_GAIN2_L,
+  RAM_CAL_GAIN2_H,
+};
+
 Dynamixel Dxl(DXL_BUS_SERIAL1);
 
 class SlaveCM904
 {
   public:
+    byte ADL=0;
+    byte ADH=0;
     void Begin();
     void Set(byte MNL, byte MNH, byte FV, byte ID, byte BR, byte RDT, byte SRL, byte DBR, byte led);
-    virtual bool GetMessage();
+    bool GetMessage();
+    void TransmitMessage( byte err, byte* data, byte len );
     void GenerateCheckSum();
-    virtual bool CheckID();
-    virtual void Signal(int status);
-    virtual void Blink();
-    virtual void Ping();
+    void postProcessRegisterWrite(); //funció per actualitzar despres de l'escritra a la eeprom
+    bool CheckID();
+    void Indicator(int status);
+    void Blink();
+    void Ping();
   protected:
     int DecodeIndex;
     byte mID;
     byte mCount;
     byte mLength;
     byte mInstruction;
-    byte mData[ 256 ];
+    byte mParam[ 256 ];
     byte mChecksum;
-
     void ProcessMessage( byte instruction, byte* data, int len );
   private:
     byte ModelNumberL ;
@@ -115,14 +146,14 @@ class SlaveCM904
 //falta cargar automaticament els valors de la emprom
 void SlaveCM904::Begin()
 {
-  
+
 }
 
 
 //------------------------------------------------------------------------------
 // SlaveCM904::Begin - Initialize the object from given values
 //------------------------------------------------------------------------------
-//falta assignar els valors a la emprom
+//falta assignar els valors a la emprom  cridant a la funció begin
 void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, byte SRL, byte DBR, byte led)
 {
   ModelNumberL = MNL;
@@ -149,8 +180,8 @@ void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, 
   DXLBaudRate = DBR;
   Dxl.begin(DXLBaudRate);
   LED = led;
-  if( LED == LED_ON ) Signal(LED_ON);
-  if( LED == LED_OFF ) Signal(LED_OFF);
+  if( LED == LED_ON ) Indicator(LED_ON);
+  if( LED == LED_OFF ) Indicator(LED_OFF);
 }
 
 
@@ -208,7 +239,7 @@ bool SlaveCM904::GetMessage()
           if ( mLength == 2 ) DecodeIndex = DE_CHECKSUM;
           break;
         case DE_DATA:
-          mData[ mCount++ ] = input;
+          mParam[ mCount++ ] = input;
           if ( mCount >= mLength - 2 )
           {
             DecodeIndex = DE_CHECKSUM;
@@ -228,10 +259,10 @@ bool SlaveCM904::GetMessage()
                 Serial.print(mInstruction);
                 for (int i = 0; i<=mCount; i++)
                 {
-                  Serial.print(mData[i]);
+                  Serial.print(mParam[i]);
                 }
                 Serial.println(mChecksum);
-                ProcessMessage( mInstruction, mData, mLength - 2 );
+                ProcessMessage( mInstruction, mParam, mLength - 2 );
               }
             }
           }
@@ -244,7 +275,7 @@ bool SlaveCM904::GetMessage()
   return ID_OK;
 }
 
-void SlaveCM904::ProcessMessage( byte instruction, byte* data, int len )
+void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
 {
   switch ( instruction )
   {
@@ -253,28 +284,39 @@ void SlaveCM904::ProcessMessage( byte instruction, byte* data, int len )
         Ping();
       }
       break;
-    /*case READ:
+    case READ:
       {
-        byte index = data[ 0 ];
-        byte datalen = data[ 1 ];
-        preProcessRegisterRead(index, datalen);
-        transmitMessage( 0, &REG[ index ], datalen );
+        byte index = param[ 0 ];
+        byte datalen = param[ 1 ];
+        //transmitMessage( 0, index, datalen );
       }
       break;
-    case WRITE:
+    /*case WRITE:
       {
-        byte index = data[ 0 ];
+        byte index = param[ 0 ];
         byte length = len - 1;
 
         transmitMessage( 0, 0, 0 ); // Start sending response as quick as possible
-        writeValues(index, length, data + 1 );
-        postProcessRegisterWrite(index, length);
+        writeValues(index, length, param + 1 );
+        postProcessRegisterWrite();
       }
       break;*/
   }
 }
 
-void SlaveCM904::Signal(int status)
+void SlaveCM904::TransmitMessage( byte err, byte* data, byte len )
+{
+  /*
+  byte txmsg[ 1024 ];
+
+  txmsg[ 0 ] = txmsg[ 1 ] = 0xFF;
+  txmsg[ 2 ] = REG[ REG_ID ];
+  txmsg[ 3 ] = len + 2;
+  txmsg[ 4 ] = err;
+*/
+}
+
+void SlaveCM904::Indicator(int status)
 {
   int led_pin = 14;
   pinMode(led_pin, OUTPUT);
@@ -287,7 +329,7 @@ void SlaveCM904::GenerateCheckSum()
   byte paramsum=0;
   for (int i = 0; i<=mCount; i++)
   {
-    paramsum = paramsum +  mData[i];
+    paramsum = paramsum +  mParam[i];
   }
   mChecksum = ~(mID + mLength + mInstruction + paramsum);
 }
@@ -301,7 +343,7 @@ bool SlaveCM904::CheckID()
 
 void SlaveCM904::Ping()
 {
-  int rep[] = { 255, 255, ID, 2, 0, 249};
+  int rep[] = { 255, 255, ID, 2, 0, ~(ID+2)};
   for (int j = 0; j <= 5; j++) {
     Dxl.writeRaw(rep[j]);
   }
