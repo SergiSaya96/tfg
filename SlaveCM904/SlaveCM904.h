@@ -103,8 +103,9 @@ Dynamixel Dxl(DXL_BUS_SERIAL1);
 class SlaveCM904
 {
   public:
-    byte ADL=0;
-    byte ADH=0;
+    byte REGISTER[48];
+    //byte ADL=0;
+    //byte ADH=0;
     void Begin();
     void Set(byte MNL, byte MNH, byte FV, byte ID, byte BR, byte RDT, byte SRL, byte DBR, byte led);
     bool GetMessage();
@@ -124,7 +125,7 @@ class SlaveCM904
     byte mParam[ 256 ];
     byte mChecksum;
     void ProcessMessage( byte instruction, byte* data, int len );
-  private:
+  /*private:
     byte ModelNumberL ;
     byte ModelNumberH ;
     byte FirmwareVersion ;
@@ -137,7 +138,7 @@ class SlaveCM904
     byte OFFL;
     byte OFFH;
     byte ERRL;
-    byte ERRH;
+    byte ERRH;*/
 };
 
 //------------------------------------------------------------------------------
@@ -156,12 +157,12 @@ void SlaveCM904::Begin()
 //falta assignar els valors a la emprom  cridant a la funció begin
 void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, byte SRL, byte DBR, byte led)
 {
-  ModelNumberL = MNL;
-  ModelNumberH = MNH;
-  FirmwareVersion = FV;
-  ID=iden;
-  BaudRate = BR;
-  switch (BaudRate) {
+  REGISTER[EEPROM_MODEL_NUMBER_L] = MNL;
+  REGISTER[EEPROM_MODEL_NUMBER_H] = MNH;
+  REGISTER[EEPROM_FIRMWARE_VERSION] = FV;
+  REGISTER[EEPROM_ID]=iden;
+  REGISTER[EEPROM_BUD_RATE] = BR;
+  switch (REGISTER[EEPROM_BUD_RATE]) {
     case BAUD_9600:
       Serial.begin(9600);
       break;
@@ -175,13 +176,13 @@ void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, 
       Serial.begin(1000000);
       break;
   }
-  ReturnDelayTime = RDT;
-  StatusReturnLevel = SRL;
-  DXLBaudRate = DBR;
-  Dxl.begin(DXLBaudRate);
-  LED = led;
-  if( LED == LED_ON ) Indicator(LED_ON);
-  if( LED == LED_OFF ) Indicator(LED_OFF);
+  REGISTER[EEPROM_RETURN_DELAY_TIME] = RDT;
+  REGISTER[EEPROM_STATUS_RETURN_LEVEL] = SRL;
+  REGISTER[EEPROM_DXL_BAUD_RATE] = DBR;
+  Dxl.begin(REGISTER[EEPROM_DXL_BAUD_RATE]);
+  REGISTER[EEPROM_LED] = led;
+  if( led == LED_ON ) Indicator(LED_ON);
+  if( led == LED_OFF ) Indicator(LED_OFF);
 }
 
 
@@ -337,13 +338,13 @@ void SlaveCM904::GenerateCheckSum()
 bool SlaveCM904::CheckID()
 {
   bool ID_OK=false;
-  if(mID == ID) ID_OK = true;
+  if(mID == REGISTER[EEPROM_ID]) ID_OK = true;
   return ID_OK;
 }
 
 void SlaveCM904::Ping()
 {
-  int rep[] = { 255, 255, ID, 2, 0, ~(ID+2)};
+  int rep[] = { 255, 255, REGISTER[EEPROM_ID], 2, 0, ~(REGISTER[EEPROM_ID]+2)};
   for (int j = 0; j <= 5; j++) {
     Dxl.writeRaw(rep[j]);
   }
