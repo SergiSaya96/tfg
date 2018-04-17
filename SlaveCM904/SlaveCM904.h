@@ -5,6 +5,12 @@
   Released into the public domain.
 */
 
+/*
+-return delay
+-cal sequ
+-dac gain
+*/
+
 #ifndef SlaveCM904_h
 #define SlaveCM904_h
 
@@ -119,7 +125,7 @@ class SlaveCM904
     bool GetMessage();
     virtual void TransmitMessage( byte err, byte index, byte len );
     void GenerateCheckSum();
-    virtual void postProcessRegisterWrite(); //funció per actualitzar despres de l'escritura a la eeprom
+    virtual void PostProcess(); //funció per actualitzar despres de l'escritura a la eeprom
     bool CheckID();
     void Peripherals();
     void Indicator(int status);
@@ -136,87 +142,12 @@ class SlaveCM904
     byte mParam[ 256 ];
     byte mChecksum;
     void ProcessMessage( byte instruction, byte* data, int len );
+    void WriteValues( byte index, byte len, byte* data );
 };
 
 void SlaveCM904::Setup()
 {
   Wire.begin(); //Start i2c
-}
-
-//------------------------------------------------------------------------------
-// SlaveCM904::Begin - Initialize the object from given values when EEPROM empty
-//------------------------------------------------------------------------------
-void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, byte SRL, byte DBR, byte led)
-{
-  REGISTER[EEPROM_MODEL_NUMBER_L] = MNL;
-  REGISTER[EEPROM_MODEL_NUMBER_H] = MNH;
-  REGISTER[EEPROM_FIRMWARE_VERSION] = FV;
-  REGISTER[EEPROM_ID]=iden;
-  REGISTER[EEPROM_BUD_RATE] = BR;
-  switch (REGISTER[EEPROM_BUD_RATE]) {
-    case BAUD_9600:
-      Serial.begin(9600);
-      break;
-    case BAUD_57000:
-      Serial.begin(57000);
-      break;
-    case BAUD_115200:
-      Serial.begin(115200);
-      break;
-    case BAUD_1M:
-      Serial.begin(1000000);
-      break;
-  }
-  REGISTER[EEPROM_RETURN_DELAY_TIME] = RDT;
-  REGISTER[EEPROM_STATUS_RETURN_LEVEL] = SRL;
-  REGISTER[EEPROM_DXL_BAUD_RATE] = DBR;
-  switch (REGISTER[EEPROM_DXL_BAUD_RATE]) {
-    case DXL_BAUD_RATE_9600:
-      Dxl.begin(0);
-      break;
-    case DXL_BAUD_RATE_57600:
-      Dxl.begin(1);
-      break;
-    case DXL_BAUD_RATE_115200:
-      Dxl.begin(2);
-      break;
-    case DXL_BAUD_RATE_1Mbps:
-      Dxl.begin(3);
-      break;
-  }
-  
-  REGISTER[EEPROM_LED] = led;
-  Peripherals();
-  
-
-  Serial.println("Writing EEPROM...");
-  delay(5);
-  Wire.beginTransmission(I2C_EEPROM);  //EEPROM adress
-  Wire.write(byte(0x00)); //EEPROM reg Low
-  Wire.write(byte(EEPROM_MODEL_NUMBER_L));  //EEPROM reg Low
-  Wire.write(byte(MNL));  //data
-  Wire.write(byte(MNH));
-  Wire.endTransmission(); //finish transmision
-  delay(5);
-
-  Wire.beginTransmission(I2C_EEPROM);
-  Wire.write(byte(0x00));
-  Wire.write(byte(EEPROM_FIRMWARE_VERSION));
-  Wire.write(byte(FV));
-  Wire.write(byte(iden));
-  Wire.write(byte(BR));
-  Wire.write(byte(RDT));
-  Wire.write(byte(SRL));
-  Wire.endTransmission();
-  delay(5);
-
-  Wire.beginTransmission(I2C_EEPROM);
-  Wire.write(byte(0x00));
-  Wire.write(byte(EEPROM_DXL_BAUD_RATE));
-  Wire.write(byte(DBR));
-  Wire.write(byte(led));
-  Wire.endTransmission();
-  
 }
 
 //------------------------------------------------------------------------------
@@ -276,7 +207,7 @@ void SlaveCM904::Begin()
 }
 
 //------------------------------------------------------------------------------
-// SlaveCM904::GetMessage - Decodes de instrction packect
+// SlaveCM904::GetMessage - Decodes de instruction packect
 //------------------------------------------------------------------------------
 bool SlaveCM904::GetMessage()
 {
@@ -391,7 +322,7 @@ bool SlaveCM904::GetMessage()
 }
 
 //------------------------------------------------------------------------------
-// SlaveCM904::ProcessMessage - Executes de corresponding actioin
+// SlaveCM904::ProcessMessage - Executes de corresponding action
 //------------------------------------------------------------------------------
 void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
 {
@@ -412,15 +343,15 @@ void SlaveCM904::ProcessMessage( byte instruction, byte* param, int len )
         TransmitMessage( 0, index, datalen );
       }
       break;
-    /*case WRITE:
+    case WRITE:
       {
         byte index = param[ 0 ];
         byte length = len - 1;
-        transmitMessage( 0, 0, 0 ); // Start sending response as quick as possible
-        writeValues(index, length, param + 1 );  //Write values on EEPROM & update REGISTER
-        postProcessRegisterWrite(); //execute possible changes
+        TransmitMessage( 0, 0, 0 ); // Start sending response as quick as possible
+        WriteValues(index, length, param + 1 );
+        PostProcess(); //execute possible changes
       }
-      break;*/
+      break;
   }
 }
 
@@ -455,6 +386,41 @@ void SlaveCM904::TransmitMessage( byte err, byte index, byte len )
   delayMicroseconds(800);
 }
 
+//------------------------------------------------------------------------------
+// SlaveCM904::WriteValues - Write values on EEPROM & update REGISTER
+//------------------------------------------------------------------------------
+void SlaveCM904::WriteValues( byte index, byte len, byte* data )
+{
+  for ( int i = 0; i < len; ++i )
+  {
+    REGISTER[ index + i ] = data[ i ];
+  }
+  i2c_eeprom_write_page( I2C_EEPROM, index, (byte*) data, len );
+}
+
+//------------------------------------------------------------------------------
+// SlaveCM904::WriteValues - Executes possible changes
+//------------------------------------------------------------------------------
+void SlaveCM904::PostProcess()
+{
+  switch (REGISTER[EEPROM_BUD_RATE]) {
+    case BAUD_9600:
+      Serial.begin(9600);
+      break;
+    case BAUD_57000:
+      Serial.begin(57000);
+      break;
+    case BAUD_115200:
+      Serial.begin(115200);
+      break;
+    case BAUD_1M:
+      Serial.begin(1000000);
+      break;
+  }
+
+  Peripherals();
+} 
+
 void SlaveCM904::Peripherals()
 {
   if( REGISTER[EEPROM_LED] == LED_ON ) Indicator(LED_ON);
@@ -472,7 +438,7 @@ void SlaveCM904::Indicator(int status)
 void SlaveCM904::GenerateCheckSum()
 {
   byte paramsum=0;
-  for (int i = 0; i<=mCount; i++)
+  for (int i = 0; i<mCount; i++)
   {
     paramsum = paramsum +  mParam[i];
   }
@@ -526,6 +492,82 @@ void SlaveCM904::i2c_eeprom_read_buffer( int deviceaddress, unsigned int eeaddre
     int c = 0;
     for ( c = 0; c < length; c++ )
         if (Wire.available()) buffer[c] = Wire.read();
+}
+
+//------------------------------------------------------------------------------
+// SlaveCM904::Begin - Initialize the object from given values when EEPROM empty
+//------------------------------------------------------------------------------
+void SlaveCM904::Set(byte MNL, byte MNH, byte FV, byte iden, byte BR, byte RDT, byte SRL, byte DBR, byte led)
+{
+  REGISTER[EEPROM_MODEL_NUMBER_L] = MNL;
+  REGISTER[EEPROM_MODEL_NUMBER_H] = MNH;
+  REGISTER[EEPROM_FIRMWARE_VERSION] = FV;
+  REGISTER[EEPROM_ID]=iden;
+  REGISTER[EEPROM_BUD_RATE] = BR;
+  switch (REGISTER[EEPROM_BUD_RATE]) {
+    case BAUD_9600:
+      Serial.begin(9600);
+      break;
+    case BAUD_57000:
+      Serial.begin(57000);
+      break;
+    case BAUD_115200:
+      Serial.begin(115200);
+      break;
+    case BAUD_1M:
+      Serial.begin(1000000);
+      break;
+  }
+  REGISTER[EEPROM_RETURN_DELAY_TIME] = RDT;
+  REGISTER[EEPROM_STATUS_RETURN_LEVEL] = SRL;
+  REGISTER[EEPROM_DXL_BAUD_RATE] = DBR;
+  switch (REGISTER[EEPROM_DXL_BAUD_RATE]) {
+    case DXL_BAUD_RATE_9600:
+      Dxl.begin(0);
+      break;
+    case DXL_BAUD_RATE_57600:
+      Dxl.begin(1);
+      break;
+    case DXL_BAUD_RATE_115200:
+      Dxl.begin(2);
+      break;
+    case DXL_BAUD_RATE_1Mbps:
+      Dxl.begin(3);
+      break;
+  }
+  
+  REGISTER[EEPROM_LED] = led;
+  Peripherals();
+  
+
+  Serial.println("Writing EEPROM...");
+  delay(5);
+  Wire.beginTransmission(I2C_EEPROM);  //EEPROM adress
+  Wire.write(byte(0x00)); //EEPROM reg Low
+  Wire.write(byte(EEPROM_MODEL_NUMBER_L));  //EEPROM reg Low
+  Wire.write(byte(MNL));  //data
+  Wire.write(byte(MNH));
+  Wire.endTransmission(); //finish transmision
+  delay(5);
+
+  Wire.beginTransmission(I2C_EEPROM);
+  Wire.write(byte(0x00));
+  Wire.write(byte(EEPROM_FIRMWARE_VERSION));
+  Wire.write(byte(FV));
+  Wire.write(byte(iden));
+  Wire.write(byte(BR));
+  Wire.write(byte(RDT));
+  Wire.write(byte(SRL));
+  Wire.endTransmission();
+  delay(5);
+
+  Wire.beginTransmission(I2C_EEPROM);
+  Wire.write(byte(0x00));
+  Wire.write(byte(EEPROM_DXL_BAUD_RATE));
+  Wire.write(byte(DBR));
+  Wire.write(byte(led));
+  Wire.endTransmission();
+  
 }
 
 #endif
