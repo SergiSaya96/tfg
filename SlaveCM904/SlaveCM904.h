@@ -7,7 +7,6 @@
 
 /*
 -return delay
--cal sequ
 -dac gain
 */
 
@@ -28,8 +27,8 @@
 //------------------------------------------------------------------------------
 #define I2C_EEPROM 80
 #define I2C_DAC_VREF 9
-#define I2C_DAC_V+ 76
-//#define I2C_DAC_V- 
+#define I2C_DAC_VP 76
+#define I2C_DAC_VN 78
 
 #define DXL_BUS_SERIAL1 1  //Dynamixel on Serial1(USART1)  <-OpenCM9.04
 
@@ -86,30 +85,27 @@ enum DECODE_STEP
 
 enum EEPPROM_REG
 {
-  EEPROM_MODEL_NUMBER_L,
-  EEPROM_MODEL_NUMBER_H,
-  EEPROM_FIRMWARE_VERSION=0x06,
-  EEPROM_ID,
-  EEPROM_BUD_RATE,
+  EEPROM_MODEL_NUMBER_L,  //Y
+  EEPROM_MODEL_NUMBER_H,  //Y
+  EEPROM_FIRMWARE_VERSION=0x06,  //Y
+  EEPROM_ID,  //Y
+  EEPROM_BUD_RATE,  //Y
   EEPROM_RETURN_DELAY_TIME,
   EEPROM_STATUS_RETURN_LEVEL,
-  EEPROM_DXL_BAUD_RATE=0x12,
-  EEPROM_LED,
-  EEPROM_ERR_OFF_L,
-  EEPROM_ERR_OFF_H,
+  EEPROM_DXL_BAUD_RATE=0x12,  //Y
+  EEPROM_LED,  //Y
+  EEPROM_ERR_OFF_L,  //Y
+  EEPROM_ERR_OFF_H,  //Y
   EEPROM_ERR_GAIN_L,
   EEPROM_ERR_GAIN_H
 };
 
 enum RAM_REG
 {
-  RAM_ADL=0x18,
-  RAM_ADH,
-  RAM_CAL_OFF_PORCESS,
-  RAM_CAL_GAIN1_L,
-  RAM_CAL_GAIN1_H,
-  RAM_CAL_GAIN2_L,
-  RAM_CAL_GAIN2_H,
+  RAM_GAUGE_L=0x18,  //Y
+  RAM_GAUGE_H,  //Y
+  RAM_CAL_OFF_PROCESS,  //Y
+  RAM_CAL_GAIN_PROCESS,
 };
 
 Dynamixel Dxl(DXL_BUS_SERIAL1);
@@ -129,6 +125,9 @@ class SlaveCM904
     bool CheckID();
     void Peripherals();
     void Indicator(int status);
+    void CalibrationOffset();
+    void CompensateOffset();
+    void CalibrationGain();
     void Blink();
     void Ping(byte err);
     void i2c_eeprom_read_buffer( int deviceaddress, unsigned int eeaddress, byte *buffer, int length );
@@ -148,6 +147,7 @@ class SlaveCM904
 void SlaveCM904::Setup()
 {
   Wire.begin(); //Start i2c
+  analogReadResolution(12);  //Set ADC's resolution
 }
 
 //------------------------------------------------------------------------------
@@ -168,9 +168,14 @@ void SlaveCM904::Begin()
   REGISTER[EEPROM_RETURN_DELAY_TIME] = buffer[3];
   REGISTER[EEPROM_STATUS_RETURN_LEVEL] = buffer[4];
   delay(5);
-  i2c_eeprom_read_buffer( I2C_EEPROM, byte(EEPROM_DXL_BAUD_RATE),(byte*)buffer, 2 );
+  i2c_eeprom_read_buffer( I2C_EEPROM, byte(EEPROM_DXL_BAUD_RATE),(byte*)buffer, 6 );
   REGISTER[EEPROM_DXL_BAUD_RATE] = buffer[0];
   REGISTER[EEPROM_LED] = buffer[1];
+  REGISTER[EEPROM_ERR_OFF_L] = buffer[2];
+  REGISTER[EEPROM_ERR_OFF_H] = buffer[3];
+  REGISTER[EEPROM_ERR_GAIN_L] = buffer[4];
+  REGISTER[EEPROM_ERR_GAIN_H] = buffer[5];
+
   
   switch (REGISTER[EEPROM_BUD_RATE]) {
     case BAUD_9600:
@@ -288,19 +293,19 @@ bool SlaveCM904::GetMessage()
               if (ID_OK = CheckID() )
               {
                 Serial.print("ID:");
-                Serial.print(mID);
+                Serial.print(mID,HEX);
                 Serial.print(" Length:");
-                Serial.print(mLength);
+                Serial.print(mLength,HEX);
                 Serial.print(" Ims:");
-                Serial.print(mInstruction);
+                Serial.print(mInstruction,HEX);
                 Serial.print(" Param:");
                 for (int i = 0; i<=(mCount-1); i++)
                 {
-                  Serial.print(mParam[i]);
+                  Serial.print(mParam[i],HEX);
                   Serial.print("-");
                 }
                 Serial.print(" CheS:");
-                Serial.println(mChecksum);
+                Serial.println(mChecksum,HEX);
                 ProcessMessage( mInstruction, mParam, mLength - 2 );
               }
             }
@@ -391,11 +396,19 @@ void SlaveCM904::TransmitMessage( byte err, byte index, byte len )
 //------------------------------------------------------------------------------
 void SlaveCM904::WriteValues( byte index, byte len, byte* data )
 {
+  Serial.print("Writing in ");
+  Serial.print(index);
+  Serial.print("  ");
+  Serial.print(len);
+  Serial.print(" bits Value:");
+  Serial.println(data[0]);
   for ( int i = 0; i < len; ++i )
   {
     REGISTER[ index + i ] = data[ i ];
   }
-  i2c_eeprom_write_page( I2C_EEPROM, index, (byte*) data, len );
+  if(index<byte(0x18)){
+    i2c_eeprom_write_page( I2C_EEPROM, index, (byte*) data, len );
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -421,10 +434,18 @@ void SlaveCM904::PostProcess()
   Peripherals();
 } 
 
+//------------------------------------------------------------------------------
+// SlaveCM904::Peripherals - Writes values at the peripherals
+//------------------------------------------------------------------------------
 void SlaveCM904::Peripherals()
 {
+  Serial.print("PERIPHERALS!!  ");
+  Serial.println(REGISTER[RAM_CAL_OFF_PROCESS]);
   if( REGISTER[EEPROM_LED] == LED_ON ) Indicator(LED_ON);
   if( REGISTER[EEPROM_LED] == LED_OFF ) Indicator(LED_OFF);
+  if( REGISTER[byte(RAM_CAL_OFF_PROCESS)] == 1 ) CalibrationOffset();
+  else CompensateOffset();
+  if( REGISTER[RAM_CAL_GAIN_PROCESS] == 1) CalibrationGain();
 }
 
 void SlaveCM904::Indicator(int status)
@@ -433,6 +454,60 @@ void SlaveCM904::Indicator(int status)
   pinMode(led_pin, OUTPUT);
   if(status == LED_ON) digitalWrite(led_pin, LOW);  // set to as HIGH LED is turn-off
   if(status == LED_OFF) digitalWrite(led_pin, HIGH);   // set to as LOW LED is turn-on
+}
+
+void SlaveCM904::CalibrationOffset()
+{
+  Serial.println("Ofsset cal started ");
+  unsigned int val = 0xAF0;
+  while(analogRead(A3)<2048)
+  {
+    Serial.print(analogRead(A3));
+    Serial.print("  ");
+    Serial.println(val,HEX);
+    Wire.beginTransmission(I2C_DAC_VREF); // transmit to Vref DAC
+    Wire.write(val >> 8);          // sends instruction byte
+    Wire.write(val & byte(0x00ff));      
+    Wire.endTransmission();     // stop transmitting
+    val++;
+    delayMicroseconds(50);
+  }
+  delay(5);
+  REGISTER[RAM_CAL_OFF_PROCESS] = 0;
+  REGISTER[EEPROM_ERR_OFF_H] = val>>8;
+  REGISTER[EEPROM_ERR_OFF_L] = val;
+  Serial.println(val,HEX);
+  Wire.beginTransmission(I2C_EEPROM);  //EEPROM adress
+  Wire.write(byte(0x00)); //EEPROM reg Low
+  Wire.write(EEPROM_ERR_OFF_L);  //EEPROM reg Low
+  Wire.write(val);  //data
+  Wire.write(val>>8);
+  Wire.endTransmission(); //finish transmision
+  delay(5);
+}
+
+void SlaveCM904::CompensateOffset()
+{
+  Wire.beginTransmission(I2C_DAC_VREF); // transmit to Vref DAC
+  Wire.write(REGISTER[EEPROM_ERR_OFF_H]);          // sends instruction byte
+  Wire.write(REGISTER[EEPROM_ERR_OFF_L]);      
+  Wire.endTransmission();     // stop transmitting
+}
+
+void SlaveCM904::CalibrationGain()
+{
+  Wire.beginTransmission(I2C_DAC_VP); 
+  Wire.write(byte(0x30));
+  Wire.write(byte(0x5f));
+  Wire.write(byte(0xff));
+  Wire.endTransmission();     // stop transmitting
+  delay(5);
+  Wire.beginTransmission(I2C_DAC_VN); 
+  Wire.write(byte(0x30));
+  Wire.write(byte(0x5f));
+  Wire.write(byte(0xff));
+  Wire.endTransmission();     // stop transmitting
+  delay(5);
 }
 
 void SlaveCM904::GenerateCheckSum()
